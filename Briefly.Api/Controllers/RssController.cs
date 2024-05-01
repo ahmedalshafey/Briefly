@@ -120,7 +120,7 @@ namespace Briefly.Api.Controllers
         }
 
 
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response<RssDto>), StatusCodes.Status200OK)]
         [HttpGet(Routes.RssRouting.GetById)]
         public async Task<IActionResult> GetRssByIdd(int id, CancellationToken cancellationToken)
