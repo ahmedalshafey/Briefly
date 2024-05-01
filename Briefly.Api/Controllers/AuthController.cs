@@ -1,13 +1,13 @@
 ﻿using Briefly.Core.Features.Auth.Commands.Model;
 using Briefly.Core.Features.Auth.Queires.Model;
 using Briefly.Core.Response;
+using Briefly.Data.Result;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolProject.Data.ApiRoutingData;
 using System.Net;
-
 
 namespace Briefly.Api.Controllers
 {
@@ -30,6 +30,8 @@ namespace Briefly.Api.Controllers
             _googleSigninValidator = googleSigninValidator;
         }
 
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [HttpPost(Routes.AuthRouting.Register)]
         public async Task<IActionResult> Register(RegisterCommand registerCommand)
         {
@@ -43,6 +45,9 @@ namespace Briefly.Api.Controllers
             return Result(response);
         }
 
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [HttpPost(Routes.AuthRouting.Login)]
         public async Task<IActionResult> Login(LoginCommand loginCommand)
         {
@@ -57,13 +62,17 @@ namespace Briefly.Api.Controllers
             return Result(response);
         }
 
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [HttpPost(Routes.AuthRouting.ConfirmEmail)]
         public async Task<IActionResult> ConfirmEmail([FromQuery] int userId,string Code)
         {
             var response = await _mediator.Send(new ConfirmEmailQuery { userId=userId,Code=Code});
             return Result(response);
         }
-
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [HttpPost(Routes.AuthRouting.SendResetPassword)]
         public async Task<IActionResult> SendResetPassword(SendResetPasswordCommand command)
         {
@@ -77,6 +86,8 @@ namespace Briefly.Api.Controllers
             return Result(response);
         }
 
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [HttpPost(Routes.AuthRouting.ConfirmResetPassword)]
         public async Task<IActionResult> ConfirmResetPassword(ConfirmResetPasswordQuery query)
         {
@@ -84,6 +95,10 @@ namespace Briefly.Api.Controllers
             return Result(response);
         }
 
+
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [HttpPost(Routes.AuthRouting.ResetPassword)]
         public async Task<IActionResult> ResetPassword(ResetPasswordCommand command)
         {
@@ -98,6 +113,9 @@ namespace Briefly.Api.Controllers
             return Result(response);
         }
 
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Response<JwtResult>), StatusCodes.Status200OK)]
         [HttpPost(Routes.AuthRouting.GenerateRefreshToken)]
         public async Task<IActionResult> GenerateRefreshToken(RefreshTokenCommand command)
         {
@@ -105,6 +123,8 @@ namespace Briefly.Api.Controllers
             return Result(response);
         }
 
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(Response<string>), StatusCodes.Status200OK)]
         [HttpPost(Routes.AuthRouting.CheckValidationToken)]
         public async Task<IActionResult> CheckValidationToken(string token)
         {
@@ -112,6 +132,8 @@ namespace Briefly.Api.Controllers
             return Result(response);
         }
 
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Response<JwtResult>), StatusCodes.Status200OK)]
         [HttpPost(Routes.AuthRouting.LoginGoogle)]
         public async Task<IActionResult> LoginGoogle(string tokenId)
         {
