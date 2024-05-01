@@ -3,6 +3,7 @@ using Briefly.Core.Features.Auth.Commands.Validations;
 using Briefly.Core.Features.Rss.Commands.Model;
 using Briefly.Core.Features.Rss.Queires.Model;
 using Briefly.Core.Features.Rss.Queires.ViewModel;
+using Briefly.Core.Pagination;
 using Briefly.Core.Response;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -31,6 +32,9 @@ namespace Briefly.Api.Controllers
             _rssUserUnSubscribeValidator = rssUserUnSubscribeValidator;
         }
 
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType( StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [HttpPost(Routes.RssRouting.Create)]
         public async Task<IActionResult> CreateRss(string rssUrl, CancellationToken cancellationToken)
         {
@@ -47,8 +51,8 @@ namespace Briefly.Api.Controllers
             return Result(result);
         }
 
-
-
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [HttpPost(Routes.RssRouting.RssUserSubscribe)]
         public async Task<IActionResult> RssUserSubscribe([FromRoute] int rssId, CancellationToken cancellationToken)
         {
@@ -64,6 +68,9 @@ namespace Briefly.Api.Controllers
             return Result(result);
         }
 
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [HttpPost(Routes.RssRouting.RssUserUnSubscribe)]
         public async Task<IActionResult> RssUserUnSubscribe([FromRoute] int rssId, CancellationToken cancellationToken)
         {
@@ -78,7 +85,9 @@ namespace Briefly.Api.Controllers
             var result = await _mediator.Send(new RssUserUnSubscribeCommand { UserId = userId, RssId = rssId }, cancellationToken);
             return Result(result);
         }
-
+        
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(PaginationResponse<SubscribrdRssDto>), StatusCodes.Status200OK)]
         [HttpGet(Routes.RssRouting.SubscribedRss)]
         public async Task<IActionResult> SubscribedRss([FromQuery] int PageNumber,int PageSize , CancellationToken cancellationToken)
         {
@@ -89,8 +98,8 @@ namespace Briefly.Api.Controllers
 
 
 
-        [ProducesResponseType(typeof(List<RssDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response<string>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Response<List<RssDto>>), StatusCodes.Status200OK)]
         [HttpGet(Routes.RssRouting.GetAll)]
         public async Task<IActionResult> GetAllRss(CancellationToken cancellationToken)
         {
@@ -100,8 +109,8 @@ namespace Briefly.Api.Controllers
             return Result(result);
         }
 
-        [ProducesResponseType(typeof(RssDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response<string>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Response<RssDto>), StatusCodes.Status200OK)]
         [HttpGet(Routes.RssRouting.GetById)]
         public async Task<IActionResult> GetRssById(int id, CancellationToken cancellationToken)
         {
