@@ -119,5 +119,17 @@ namespace Briefly.Api.Controllers
             return Result(result);
         }
 
+
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Response<RssDto>), StatusCodes.Status200OK)]
+        [HttpGet(Routes.RssRouting.GetById)]
+        public async Task<IActionResult> GetRssByIdd(int id, CancellationToken cancellationToken)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var result = await _mediator.Send(new GetRssByIdQuery { UserId = userId, RssId = id }, cancellationToken);
+            return Result(result);
+        }
+
+
     }
 }
